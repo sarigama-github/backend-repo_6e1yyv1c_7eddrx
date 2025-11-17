@@ -12,7 +12,7 @@ Model name is converted to lowercase for the collection name:
 """
 
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, List
 
 # Example schemas (replace with your own):
 
@@ -40,6 +40,35 @@ class Product(BaseModel):
 
 # Add your own schemas here:
 # --------------------------------------------------
+
+class Item(BaseModel):
+    """
+    Rentable items posted by users
+    Collection name: "item"
+    """
+    title: str = Field(..., description="Item name")
+    description: Optional[str] = Field(None, description="Details about the item")
+    category: str = Field(..., description="Item category e.g., Tools, Electronics")
+    daily_price: float = Field(..., ge=0, description="Daily rental price")
+    owner_name: str = Field(..., description="Owner's name")
+    owner_email: str = Field(..., description="Owner's contact email")
+    location: Optional[str] = Field(None, description="Pickup location")
+    images: Optional[List[str]] = Field(default=None, description="Image URLs")
+
+class Rental(BaseModel):
+    """
+    Rental requests/reservations for items
+    Collection name: "rental"
+    """
+    item_id: str = Field(..., description="ID of the item being rented")
+    item_title: str = Field(..., description="Snapshot of the item title at time of request")
+    owner_email: str = Field(..., description="Owner's email")
+    renter_name: str = Field(..., description="Renter's name")
+    renter_email: str = Field(..., description="Renter's email")
+    start_date: str = Field(..., description="ISO date string for start date")
+    end_date: str = Field(..., description="ISO date string for end date")
+    message: Optional[str] = Field(None, description="Optional note from renter")
+    status: str = Field("pending", description="Request status: pending|approved|declined")
 
 # Note: The Flames database viewer will automatically:
 # 1. Read these schemas from GET /schema endpoint
